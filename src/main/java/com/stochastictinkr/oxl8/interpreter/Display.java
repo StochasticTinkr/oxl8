@@ -44,13 +44,14 @@ public class Display {
             int x2 = endCol;
             while (x2 != x) {
                 --x2;
-                if (x2 == 0) {
+                if (x2 < 0) {
                     x2 = width-1;
                 }
                 if ((value & 1) == 1) {
                     collision = collision || values[y][x2];
                     values[y][x2] = !values[y][x2];
                 }
+                value >>= 1;
             }
 
             ++y;

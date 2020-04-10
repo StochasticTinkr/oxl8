@@ -177,6 +177,7 @@ public class CPU {
                                 System.out.println("Key pressed: " + key);
                             }
                             paused = false;
+                            listeners.forEach(CPUListener::cpuResumed);
                         });
                         if (debug && paused) {
                             System.out.println("CPU waiting on key press...");

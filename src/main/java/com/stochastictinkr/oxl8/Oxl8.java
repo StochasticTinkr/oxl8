@@ -21,7 +21,7 @@ public class Oxl8 {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException e) {
             }
-            new App(font, rom, true).start();
+            new App(font, rom, true, path).start();
 
         });
     }

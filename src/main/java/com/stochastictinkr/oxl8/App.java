@@ -35,15 +35,14 @@ public class App {
     };
     private final Timer delay = new Timer();
     private final Timer sound = new Timer();
-    private final Display display = new Display(128, 64);
+    private final Display display = new Display(64, 32);
     private final Keyboard keyboard = new Keyboard();
     private final CPU cpu = new CPU(delay, sound, display, keyboard);
     private final DisplayComponent displayComponent = new DisplayComponent();
     private final KeyboardController keyboardController = new KeyboardController();
-    private final JFrame frame = new JFrame("Oxl8 CHIP-8 emulator");
+    private final JFrame frame;
 
     private Action runCpu = new AbstractAction("Run") {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             startCpuThread();
@@ -64,10 +63,11 @@ public class App {
     };
     private CPUThread cpuThread;
 
-    public App(byte[] font, byte[] rom, boolean debug) {
+    public App(byte[] font, byte[] rom, boolean debug, String file) {
         this.font = font;
         this.rom = rom;
         this.cpu.setDebug(debug);
+        frame = new JFrame("Oxl8 CHIP-8 emulator -- " + file);
         frame.getContentPane().setBackground(new Color(64, 70, 24));
         displayComponent.setPreferredSize(new Dimension(128 * 8, 64 * 8));
         JComponent keyboardComponent = keyboardController.getComponent();
