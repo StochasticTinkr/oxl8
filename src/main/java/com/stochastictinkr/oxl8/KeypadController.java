@@ -1,7 +1,7 @@
 package com.stochastictinkr.oxl8;
 
-import com.stochastictinkr.oxl8.interpreter.Keyboard;
-import com.stochastictinkr.oxl8.interpreter.KeyboardListener;
+import com.stochastictinkr.oxl8.interpreter.Keypad;
+import com.stochastictinkr.oxl8.interpreter.KeypadListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.font.LineMetrics;
 import java.awt.geom.RoundRectangle2D;
 import java.util.stream.IntStream;
 
-public class KeyboardController {
+public class KeypadController {
     private static final int[] keyValues = {
             0x1, 0x2, 0x3, 0xC,
             0x4, 0x5, 0x6, 0xD,
@@ -21,23 +21,23 @@ public class KeyboardController {
     private final JPanel panel = new JPanel(new GridLayout(4, 4));
     private Color pressed = Color.DARK_GRAY.brighter();
     private Color released = Color.LIGHT_GRAY.darker();
-    private final KeyboardListener keyboardListener = panel::repaint;
-    private Keyboard keyboard;
+    private final KeypadListener keypadListener = panel::repaint;
+    private Keypad keypad;
 
 
-    public KeyboardController() {
+    public KeypadController() {
         IntStream.of(keyValues)
                 .mapToObj(KeyComponent::new)
                 .peek(
                         k -> k.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent e) {
-                                keyboard.setKeyPressed(k.value, true);
+                                keypad.setKeyPressed(k.value, true);
                             }
 
                             @Override
                             public void mouseReleased(MouseEvent e) {
-                                keyboard.setKeyPressed(k.value, false);
+                                keypad.setKeyPressed(k.value, false);
                             }
                         })
                 )
@@ -49,13 +49,13 @@ public class KeyboardController {
         return panel;
     }
 
-    public void setKeyboard(Keyboard keyboard) {
-        if (this.keyboard != null) {
-            this.keyboard.removeListener(keyboardListener);
+    public void setKeypad(Keypad keypad) {
+        if (this.keypad != null) {
+            this.keypad.removeListener(keypadListener);
         }
-        this.keyboard = keyboard;
-        if (this.keyboard != null) {
-            this.keyboard.addListener(keyboardListener);
+        this.keypad = keypad;
+        if (this.keypad != null) {
+            this.keypad.addListener(keypadListener);
         }
     }
 
@@ -70,7 +70,7 @@ public class KeyboardController {
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
-            boolean isPressed = keyboard.isKeyPressed(value);
+            boolean isPressed = keypad.isKeyPressed(value);
             Color faceColor = isPressed ? pressed : released;
             RoundRectangle2D.Float shape = new RoundRectangle2D.Float(0, 0, getWidth() - 3, getHeight() - 3, getWidth() / 5f, getHeight() / 5f);
             g2d.setPaint(isPressed ? faceColor.darker() : faceColor.brighter());

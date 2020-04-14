@@ -12,15 +12,15 @@ public class CPU {
     private final Timer delay;
     private final Timer sound;
     private final Display display;
-    private final Keyboard keyboard;
+    private final Keypad keypad;
     private final Random random = new Random();
     private volatile boolean debug;
 
-    public CPU(Timer delay, Timer sound, Display display, Keyboard keyboard) {
+    public CPU(Timer delay, Timer sound, Display display, Keypad keypad) {
         this.delay = delay;
         this.sound = sound;
         this.display = display;
-        this.keyboard = keyboard;
+        this.keypad = keypad;
     }
 
     private int pc;
@@ -151,11 +151,11 @@ public class CPU {
             case 0xE:
                 switch (immediate) {
                     case 0x9E:
-                        skipIf(keyboard.isKeyPressed(vx));
+                        skipIf(keypad.isKeyPressed(vx));
                         debugVx("SKP", x, vx);
                         return;
                     case 0xA1:
-                        skipIf(!keyboard.isKeyPressed(vx));
+                        skipIf(!keypad.isKeyPressed(vx));
                         debugVx("SKNP", x, vx);
                         return;
                 }
@@ -169,8 +169,8 @@ public class CPU {
                     case 0x0A:
                         paused = true;
                         listeners.forEach(CPUListener::cpuPaused);
-                        debugVx("LD", x, vx, "K", keyboard.firstPressed());
-                        keyboard.waitForPress(key -> {
+                        debugVx("LD", x, vx, "K", keypad.firstPressed());
+                        keypad.waitForPress(key -> {
                             registers[x] = key;
                             listeners.forEach(CPUListener::cpuResumed);
                             if (debug) {

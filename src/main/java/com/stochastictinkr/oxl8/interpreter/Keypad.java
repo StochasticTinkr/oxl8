@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
-public class Keyboard {
-    private final List<KeyboardListener> listeners = new ArrayList<>();
+public class Keypad {
+    private final List<KeypadListener> listeners = new ArrayList<>();
     private final Queue<IntConsumer> oneTimeListeners = new LinkedList<>();
     private boolean[] pressedKeys = new boolean[16];
 
@@ -23,7 +23,7 @@ public class Keyboard {
             }
         }
         if (oldValue != pressed) {
-            listeners.forEach(KeyboardListener::keyboardStateChanged);
+            listeners.forEach(KeypadListener::keypadChangedStates);
         }
     }
 
@@ -34,12 +34,12 @@ public class Keyboard {
                 .ifPresentOrElse(listener, () -> oneTimeListeners.add(listener));
     }
 
-    public synchronized void removeListener(KeyboardListener keyboardListener) {
-        listeners.remove(keyboardListener);
+    public synchronized void removeListener(KeypadListener keypadListener) {
+        listeners.remove(keypadListener);
     }
 
-    public synchronized void addListener(KeyboardListener keyboardListener) {
-        listeners.add(keyboardListener);
+    public synchronized void addListener(KeypadListener keypadListener) {
+        listeners.add(keypadListener);
     }
 
     public int firstPressed() {
