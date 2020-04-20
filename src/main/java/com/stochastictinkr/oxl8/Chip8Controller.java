@@ -9,6 +9,7 @@ import com.stochastictinkr.oxl8.settings.FileSelection;
 import com.stochastictinkr.oxl8.settings.Settings;
 import lombok.SneakyThrows;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -18,6 +19,7 @@ public class Chip8Controller {
     private final FileLoader fileLoader = new FileLoader();
     private final DisplayComponent displayComponent = new DisplayComponent();
     private final KeypadController keypadController = new KeypadController();
+    private final SoundController soundController = new SoundController();
     private final Settings settings;
     private final Object stateLock = new Object();
 
@@ -40,6 +42,7 @@ public class Chip8Controller {
         keypad = new Keypad();
         display = createDisplay(settings.getDisplaySize());
         cpu = new CPU(delay, sound, display, keypad);
+        soundController.setSound(sound);
         displayComponent.setDisplay(display);
         fileLoader.load(settings.getFontFile(), Chip8Font::new).install(cpu);
         loadRom(settings.getRomFile());
@@ -83,8 +86,9 @@ public class Chip8Controller {
         frame.setTitle(String.format("Oxl8 - %s - %s", getWorkerState(), romName != null ? romName : "No ROM loaded"));
     }
 
-    public synchronized void start() throws InterruptedException {
+    public synchronized void start() throws InterruptedException, LineUnavailableException {
         resetWorker();
+        soundController.start();
         cpu.setRom(loadedRom);
         final Thread thread = new Thread(worker);
         thread.setDaemon(true);
@@ -173,11 +177,13 @@ public class Chip8Controller {
                     }
                     delay.tick();
                     sound.tick();
+                    soundController.updateSound();
                     final int timerFrequency = settings.getTimerFrequency();
                     final int frameDelayNS = 1000000000 / timerFrequency;
                     Thread.sleep(frameDelayNS / 1000000, frameDelayNS % 1000000);
                 }
             } finally {
+                soundController.stopSound();
                 setWorkerState(WorkerState.STOPPED);
             }
         }

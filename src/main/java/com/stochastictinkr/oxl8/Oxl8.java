@@ -2,6 +2,7 @@ package com.stochastictinkr.oxl8;
 
 import com.stochastictinkr.oxl8.settings.Settings;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -23,6 +24,7 @@ public class Oxl8 {
                     try {
                         chip8Controller.start();
                     } catch (InterruptedException e) {
+                    } catch (LineUnavailableException e) {
                     }
                 });
             } catch (Exception e) {
